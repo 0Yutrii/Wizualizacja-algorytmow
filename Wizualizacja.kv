@@ -1,0 +1,237 @@
+#:kivy 2.3.1
+
+<ColoredLabel>:
+    bg_color: 0.3, 0.3, 0.9, 1  
+    canvas.before:
+        Color:
+            rgba: root.bg_color
+        Rectangle:
+            pos: root.pos
+            size: root.size
+
+
+
+<WizualizacjaAlgorytmow>:    
+    BoxLayout:
+        orientation: 'horizontal'
+        size_hint: 1.0,1.0
+        
+        canvas:
+            Color:
+                rgba: 0.6, 0.6, 0.6, 1  
+            Rectangle:
+                pos: self.pos
+                size: self.size
+
+    
+        
+        BoxLayout:
+            id: leftPanel
+            orientation: 'vertical'
+            size_hint: (0.2, 1)
+            
+            BoxLayout:
+                id: logo
+                orientation: 'vertical'
+                size_hint: 1, None
+                height: "30dp"
+                canvas.before:
+                    Color:
+                        rgba: 0.3, 0.3, 0.9, 1 
+                    Rectangle:
+                        pos: self.pos
+                        size: self.size
+                Label:
+                    id: label_logo
+                    text: 'logo'
+            BoxLayout:
+                id: data
+                #cols: 1
+                orientation: 'vertical'
+                
+                canvas.before:
+                    Color:
+                        rgba: 0.3, 0.3, 0.3, 1
+                    Rectangle:
+                        pos: self.pos
+                        size: self.size
+                AnchorLayout:
+                    anchor_x: 'center'
+                    anchor_y: 'center'
+                    size_hint_y: None
+                    height: 60
+                    Button:
+                        id: mainButton
+                        text:"select point"
+                        size_hint: None, None
+                        size: 150, 50
+                GridLayout:
+                    cols:1
+                    size_hint_y: None
+                    height: self.minimum_height
+                    spacing: 5
+                    padding: [10, 10]
+                    Label:
+                        id: globalBest
+                        text:""
+                        size_hint_y: None
+                        size:(100, 40)
+                        markup: True
+                        halign: 'left'
+                        text_size: self.size
+                    Label:
+                        id: globalBestCords
+                        text:""
+                        size_hint_y: None
+                        size:(100, 40)
+                        markup: True
+                        halign: 'left'
+                        text_size: self.size
+                    Label:
+                        id: pointPersonalBest
+                        text:""
+                        size_hint_y: None
+                        size:(100, 40)
+                        markup: True
+                        halign: 'left'
+                        text_size: self.size
+                    Label:
+                        id: personalBestCords
+                        text:""
+                        size_hint_y: None
+                        size:(100, 40)
+                        markup: True
+                        halign: 'left'
+                        text_size: self.size
+                    Label:
+                        id: pointPosValue
+                        text:""
+                        size_hint_y: None
+                        size:(100, 40)
+                        markup: True
+                        halign: 'left'
+                        text_size: self.size
+                    Label:
+                        id: pointPos
+                        text:""
+                        size_hint_y: None
+                        size:(100, 40)
+                        markup: True
+                        halign: 'left'
+                        text_size: self.size
+                    
+                    Label:
+                        id: pointVelocity
+                        text:""
+                        size_hint_y: None
+                        size:(100, 40)
+                        markup: True
+                        halign: 'left'
+                        text_size: self.size
+                
+                Widget:
+                    size_hint_y: 1
+                # ScrollView:
+                    #Label:
+                    #text:"globalBest1"
+                    #size_hint_y: None
+                    #size:(100, 40)
+                #     do_scroll_x: False
+                #     size_hint: (1, 1)
+                # GridLayout:
+                #     canvas.before:
+                #         Color:
+                #             rgba: 0.7, 0.2, 0.2, 1
+                #         Rectangle:
+                #             pos: self.pos
+                #             size: self.size
+                #     id: container
+                #     cols: 1
+                #     size_hint_y: 1
+                #     #padding: 0.05
+                #     # spacing: 10
+                #     row_default_height: 50
+                #     #row_force_default: False
+                #     #height: self.minimum_height
+                        
+                        
+                
+
+        BoxLayout:
+            id: mainPanel
+            orientation: 'vertical'
+            size_hint: (1, 1)
+            canvas:
+                Color:
+                    rgba: 0.2, 0.2, 0.2, 1
+                Rectangle:
+                    pos: self.pos
+                    size: self.size
+
+            BoxLayout:
+                id: graphArea
+                size_hint: (1, 1)
+                canvas.before:
+                    Color:
+                        rgba: 0.6, 0.6, 0.6, 1
+                    Rectangle:
+                        pos: self.pos
+                        size: self.size
+
+            BoxLayout:
+                id: rotateArea
+                size_hint: (1, 0.15)
+                spacing: dp(10)
+                padding: dp(10)
+                canvas.before:
+                    Color:
+                        rgba: 0.3, 0.3, 0.3, 1
+                    Rectangle:
+                        pos: self.pos
+                        size: self.size
+                Button:
+                    id:rotate_left
+                    text: "Left"
+                    on_press: root.rotate_left(self)
+                    
+                Button:
+                    id:rotate_right
+                    text: "Right"
+                    on_press: root.rotate_right(self)
+                Button:
+                    id:rotate_up
+                    text: "Up"
+                    on_press: root.rotate_up(self)
+                Button:
+                    id:rotate_down
+                    text: "Down"
+                    on_press: root.rotate_down(self)
+
+
+            BoxLayout:
+                id: controlsArea
+                size_hint: (1, 0.2)
+                spacing: dp(10)
+                padding: dp(10)
+                canvas.before:
+                    Color:
+                        rgba: 0.3, 0.3, 0.3, 1
+                    Rectangle:
+                        pos: self.pos
+                        size: self.size
+                
+                Button:
+                    id: start_stop
+                    text: "Start/Stop"
+                    background_color: [1,0,0,1]
+                    on_press: root.start_stop(self)
+                Button:
+                    id: reset
+                    text: "Reset"
+                    background_color: [2,2,0.7,1]
+                    on_press: root.on_enter(self)
+                Button:
+                    id: options
+                    text: "Options"
+                    background_color: [0,0,1,1]
+                    on_press: root.open_options(self)
