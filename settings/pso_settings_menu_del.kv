@@ -22,11 +22,11 @@
             BoxLayout:
                 orientation: "vertical"
                 size_hint_y: None
-                height: self.minimum_height  # KLUCZOWE: BoxLayout urośnie wraz z zawartością
+                height: self.minimum_height  
                 spacing: 20
-                padding: [0, 0, 10, 0] # Mały padding z prawej na pasek przewijania
+                padding: [0, 0, 10, 0] 
 
-                # --- Sekcja PSO ---
+                
                 Label:
                     text: "Particles settings"
                     size_hint_y: None
@@ -43,7 +43,7 @@
                     id: sliders_grid
                     cols: 3
                     size_hint_y: None
-                    height: self.minimum_height  # Siatka dopasuje się do liczby rzędów
+                    height: self.minimum_height 
                     row_default_height: "40dp"
                     spacing: 16
 
@@ -141,7 +141,7 @@
                         text: "(-10 - 9)"
                     TextInput:
                         id: inputMinX
-                        text: "-6"
+                        text: "-6.0"
                         multiline: False
                         input_filter: 'float'
                         on_focus: 
@@ -154,7 +154,7 @@
                         text: "(-9 - 10)"
                     TextInput:
                         id: inputMaxX
-                        text: "6"
+                        text: "6.0"
                         multiline: False
                         input_filter: 'float'
                         on_focus: 
@@ -167,9 +167,9 @@
                         text: "(-10 - 9)"
                     TextInput:
                         id: inputMinY
-                        text: "-6"
+                        text: "-6.0"
                         multiline: False
-                        input_filter: 'int'
+                        input_filter: 'float'
                         on_focus: 
                             if not self.focus: root._validate_range(self)
                         ###
@@ -180,9 +180,9 @@
                         text: "(-9 - 10)"
                     TextInput:
                         id: inputMaxY
-                        text: "6"
+                        text: "6.0"
                         multiline: False
-                        input_filter: 'int'
+                        input_filter: 'float'
                         on_focus: 
                             if not self.focus: root._validate_range(self)
                 GridLayout:
@@ -241,14 +241,6 @@
                 id: applyBtn
                 text: "Apply"
                 on_press: root._on_apply(self)
-            # Button:
-            #     id: saveBtn
-            #     text: "Save"
-            #     on_press: root._on_save(self)
-            # Button:
-            #     id: loadBtn 
-            #     text: "Load"
-            #     on_press: root._on_load(self)
             Button:
                 id: closeBtn 
                 text: "Close"

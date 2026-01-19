@@ -13,9 +13,13 @@ from kivy.factory import Factory
 
 from functools import partial
 
-import numpy as np
-Builder.load_file("settings/pso_settings_menu.kv")
 
+import numpy as np
+
+# from utils import resource_path
+# Builder.load_file(
+#     str(resource_path("settings/pso_settings_menu.kv"))
+# )
 
 class PsoSettingsMenu(Popup):
     point = ObjectProperty(None)
@@ -124,16 +128,16 @@ class PsoSettingsMenu(Popup):
         self.callback_apply(self.temp_plot_range,self.temp_swarm_size, self.temp_math_fun)
         
     
-    def _on_save(self, instance):
-    #### TODO
-        if self.point:
-            print("Saving:", self.point)
+    # def _on_save(self, instance):
+    
+    #     if self.point:
+    #         print("Saving:", self.point)
 
 
-    def _on_load(self, instance):
-    # TODO
-        print("Load requested")
-        # TODO
+    # def _on_load(self, instance):
+    
+    #     print("Load requested")
+        
 
     
 

@@ -1,5 +1,5 @@
 from kivy.config import Config
-#wczytywanie z pliku???
+
 Config.set('graphics', 'width', '1024')
 Config.set('graphics', 'height', '768')
 Config.set('graphics', 'borderless', '0')
@@ -8,26 +8,32 @@ from kivy.app import App
 from kivy.uix.screenmanager import ScreenManager, Screen
 from kivy.lang import Builder
 
-from wizualizacja_pso import WizualizacjaAlgorytmow
+from wizualizacja_pso import PSOScreen
+from ant_colony import AntColonyScreen
 
-Builder.load_file("Wizualizacja.kv")
+import sys
+from pathlib import Path
+
+#from logic.utils import resource_path
+
+#Builder.load_file(str(resource_path("Wizualizacja.kv")))
 
 class StartScreen(Screen):
-    
     pass
 
 class MyScreenManager(ScreenManager):
     pass
 
-class Wizualizacja(App):
+
+class WizualizacjaApp(App):
     def build(self):
         sm = ScreenManager()
-        #sm.add_widget(StartScreen(name="Start"))
-        sm.add_widget(WizualizacjaAlgorytmow(name="Particle Swarm Optimization"))
-        #self.fps = klasa1.FPSmeter()
-        #Clock.schedule_once(lambda dt: self.fps.start(), 0)  
+        sm.add_widget(StartScreen(name="Start"))
+        sm.add_widget(PSOScreen(name="Particle_Swarm_Optimization"))
+        sm.add_widget(AntColonyScreen(name="Ant_Colony"))
+        
         return sm
 
 
 if __name__ == '__main__':
-    Wizualizacja().run()
+    WizualizacjaApp().run()

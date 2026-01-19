@@ -1,4 +1,44 @@
 #:kivy 2.3.1
+<StartScreen>:
+    canvas.before:
+        Color:
+            rgba: 0.1, 0.1, 0.15, 1  
+        Rectangle:
+            pos: self.pos
+            size: self.size
+
+    BoxLayout:
+        orientation: 'vertical'
+        padding: 50
+        spacing: 20
+
+        Label:
+            text: "WIZUALIZACJA ALGORYTMÓW"
+            font_size: '32sp'
+            bold: True
+            size_hint_y: 0.3
+
+        # Przycisk do PSO
+        Button:
+            text: "Particle Swarm Optimization (PSO)"
+            font_size: '20sp'
+            background_normal: ''
+            background_color: 0.2, 0.5, 0.8, 1
+            on_release: root.manager.current = 'Particle_Swarm_Optimization'
+
+        # Przycisk do Ant Colony
+        Button:
+            text: "Ant Colony Optimization (ACO)"
+            font_size: '20sp'
+            background_normal: ''
+            background_color: 0.8, 0.4, 0.2, 1
+            on_release: root.manager.current = 'Ant_Colony'
+
+        # Przycisk Wyjścia
+        Button:
+            text: "Wyjście"
+            size_hint_y: 0.2
+            on_release: app.stop()
 
 <ColoredLabel>:
     bg_color: 0.3, 0.3, 0.9, 1  
@@ -8,12 +48,26 @@
         Rectangle:
             pos: root.pos
             size: root.size
+<ReturnButton@Button>:
+    id: logo
+    text: 'Return'
+    size_hint: 1, None
+    height: "60dp"
+    background_normal: ''  
+    background_color: 0.3, 0.3, 0.9, 1  
+    on_release: app.root.current = 'Start'
 
+        # Label:
+        #     text: 'Return'
+        #     # Środkujemy etykietę wewnątrz przycisku
+        #     pos: self.parent.pos
+        #     size: self.parent.size         
 
-
-<WizualizacjaAlgorytmow>:    
+<PSOScreen>:
     BoxLayout:
         orientation: 'horizontal'
+        
+        
         size_hint: 1.0,1.0
         
         canvas:
@@ -23,30 +77,14 @@
                 pos: self.pos
                 size: self.size
 
-    
-        
         BoxLayout:
             id: leftPanel
             orientation: 'vertical'
             size_hint: (0.2, 1)
             
-            BoxLayout:
-                id: logo
-                orientation: 'vertical'
-                size_hint: 1, None
-                height: "30dp"
-                canvas.before:
-                    Color:
-                        rgba: 0.3, 0.3, 0.9, 1 
-                    Rectangle:
-                        pos: self.pos
-                        size: self.size
-                Label:
-                    id: label_logo
-                    text: 'logo'
+            ReturnButton:
             BoxLayout:
                 id: data
-                #cols: 1
                 orientation: 'vertical'
                 
                 canvas.before:
@@ -131,31 +169,6 @@
                 
                 Widget:
                     size_hint_y: 1
-                # ScrollView:
-                    #Label:
-                    #text:"globalBest1"
-                    #size_hint_y: None
-                    #size:(100, 40)
-                #     do_scroll_x: False
-                #     size_hint: (1, 1)
-                # GridLayout:
-                #     canvas.before:
-                #         Color:
-                #             rgba: 0.7, 0.2, 0.2, 1
-                #         Rectangle:
-                #             pos: self.pos
-                #             size: self.size
-                #     id: container
-                #     cols: 1
-                #     size_hint_y: 1
-                #     #padding: 0.05
-                #     # spacing: 10
-                #     row_default_height: 50
-                #     #row_force_default: False
-                #     #height: self.minimum_height
-                        
-                        
-                
 
         BoxLayout:
             id: mainPanel
@@ -208,6 +221,334 @@
                     on_press: root.rotate_down(self)
 
 
+            BoxLayout:
+                id: controlsArea
+                size_hint: (1, 0.2)
+                spacing: dp(10)
+                padding: dp(10)
+                canvas.before:
+                    Color:
+                        rgba: 0.3, 0.3, 0.3, 1
+                    Rectangle:
+                        pos: self.pos
+                        size: self.size
+                
+                Button:
+                    id: start_stop
+                    text: "Start/Stop"
+                    background_color: [1,0,0,1]
+                    on_press: root.start_stop(self)
+                Button:
+                    id: reset
+                    text: "Reset"
+                    background_color: [2,2,0.7,1]
+                    on_press: root.on_enter(self)
+                Button:
+                    id: options
+                    text: "Options"
+                    background_color: [0,0,1,1]
+                    on_press: root.open_options(self)
+
+<LinkedSlider@Slider>:
+    target_label: None
+    on_value:
+        if self.target_label: self.target_label.text = f"{self.value:.2f}"
+
+<PSOSettingsMenu>:
+
+    title: "Settings"
+    size_hint: (None, None)
+    size: (600, 420)
+    auto_dismiss: False
+    BoxLayout:
+        orientation: "vertical"
+        padding: 10
+        spacing: 10
+
+        
+        ScrollView:
+            do_scroll_y: True
+            size_hint_y: 1  
+
+            BoxLayout:
+                orientation: "vertical"
+                size_hint_y: None
+                height: self.minimum_height  
+                spacing: 20
+                padding: [0, 0, 10, 0] 
+
+                
+                Label:
+                    text: "Particles settings"
+                    size_hint_y: None
+                    height: "30dp"
+                    bold: True
+                    canvas.before:
+                        Color:
+                            rgba: 0.3, 0.3, 0.9, 1  
+                        Rectangle:
+                            pos: self.pos
+                            size: self.size
+
+                GridLayout:
+                    id: sliders_grid
+                    cols: 3
+                    size_hint_y: None
+                    height: self.minimum_height 
+                    row_default_height: "40dp"
+                    spacing: 16
+
+                    Label:
+                        text: "W (0 - 1.3):"
+                    Label:
+                        id: labelW
+                        text: "0.70"
+                    LinkedSlider:
+                        id: sliderW
+                        min: 0.0
+                        max: 1.3
+                        value: 0.7
+                        step: 0.01
+                        target_label: labelW
+                    Label:
+                        text: "c1 (0 - 5):"
+                    Label:
+                        id: labelC1
+                        text: "1.40"
+                    LinkedSlider:
+                        id: sliderC1
+                        min: 0.0
+                        max: 5.0
+                        value: 1.4
+                        step: 0.01
+                        target_label: labelC1
+                    Label:
+                        text: "c2 (0 - 5):"
+                    Label:
+                        id: labelC2
+                        text: "1.40"
+                    LinkedSlider:
+                        id: sliderC2
+                        min: 0.0
+                        max: 5.0
+                        value: 1.4
+                        step: 0.01
+                        target_label: labelC2
+                    Label:
+                        text: "Vmax (0 - 1.1):"
+                    Label:
+                        id: labelVmax
+                        text: "0.0"
+                    LinkedSlider:
+                        id: sliderVmax
+                        min: 0.0
+                        max: 1.1
+                        value: 0.0
+                        step: 0.01
+                        target_label: labelVmax
+
+                    
+            
+
+                Label:
+                    canvas.before:
+                        Color:
+                            rgba: 0.3, 0.3, 0.9, 1  
+                        Rectangle:
+                            pos: self.pos
+                            size: self.size
+                    text: "Plot settings (apply first)"
+                    size_hint_y: None
+                    height: "30dp"
+                    bold: True
+                GridLayout:
+                    id: plotSettingsGrid
+                    cols: 3
+                    size_hint_y: None
+                    height: self.minimum_height
+                    row_default_height: "40dp"
+                    spacing: 8
+                    Label:
+                        text: "Swarm size (1 - 50):"
+                    Label:
+                        id: labelSwarmSize
+                        text: "25"
+                    LinkedSlider:
+                        id: sliderSwarmSize
+                        min: 1
+                        max: 50
+                        value: 25
+                        step: 1
+                        target_label: labelSwarmSize
+                        on_value:
+                            if self.target_label: self.target_label.text = str(int(self.value))
+                            root.temp_swarm_size = int(self.value)
+
+                    ###
+                    Label:
+                        text: "min range x:"
+                    Label:
+                        id: labelMinX
+                        text: "(-10 - 9)"
+                    TextInput:
+                        id: inputMinX
+                        text: "-6.0"
+                        multiline: False
+                        input_filter: 'float'
+                        on_focus: 
+                            if not self.focus: root._validate_range(self)
+                        ###
+                    Label:
+                        text: "max range x:"
+                    Label:
+                        id: labelMaxX
+                        text: "(-9 - 10)"
+                    TextInput:
+                        id: inputMaxX
+                        text: "6.0"
+                        multiline: False
+                        input_filter: 'float'
+                        on_focus: 
+                            if not self.focus: root._validate_range(self)
+                    ###
+                    Label:
+                        text: "min range y:"
+                    Label:
+                        id: labelMinY
+                        text: "(-10 - 9)"
+                    TextInput:
+                        id: inputMinY
+                        text: "-6.0"
+                        multiline: False
+                        input_filter: 'float'
+                        on_focus: 
+                            if not self.focus: root._validate_range(self)
+                        ###
+                    Label:
+                        text: "max range y:"
+                    Label:
+                        id: labelMaxY
+                        text: "(-9 - 10)"
+                    TextInput:
+                        id: inputMaxY
+                        text: "6.0"
+                        multiline: False
+                        input_filter: 'float'
+                        on_focus: 
+                            if not self.focus: root._validate_range(self)
+                GridLayout:
+                    rows: 5
+                    cols: 1
+                    padding: 20
+                    spacing: 10
+                    size_hint_y: None
+                    size_hint_X: 0.8
+                    height: self.minimum_height
+                    row_default_height: "20dp"
+
+                    Label:
+                        canvas.before:
+                            Color:
+                                rgba: 0.3, 0.3, 0.9, 1  
+                            Rectangle:
+                                pos: self.pos
+                                size: self.size
+                        text: "math function"
+                        size_hint_y: None
+                        height: "30dp"
+                        bold: True
+
+                    ToggleButton:
+                        size_hint_X: 0.8
+                        text: 'Himmelblau’s function'
+                        group: 'math_functions'  
+                        state: 'down'         
+                        on_release: root._function_choice(1)
+
+                    ToggleButton:
+                        size_hint_X: 0.8
+                        text: 'Rosenbrock’s valley'
+                        group: 'math_functions'
+                        on_release: root._function_choice(2)
+
+                    ToggleButton:
+                        size_hint_X: 0.8
+                        text: 'Rastrigin function'
+                        group: 'math_functions'
+                        on_release: root._function_choice(3)
+
+                    ToggleButton:
+                        size_hint_X: 0.8
+                        text: 'Ackley function'
+                        group: 'math_functions'
+                        on_release: root._function_choice(4)
+                    
+                    
+        BoxLayout:
+            height: "50dp"
+            spacing: 10
+            size_hint_y: None
+            Button:
+                id: applyBtn
+                text: "Apply"
+                on_press: root._on_apply(self)
+            Button:
+                id: closeBtn 
+                text: "Close"
+                on_release: root.dismiss()
+
+<AntColonyScreen>:
+    BoxLayout:
+        orientation: 'horizontal'
+        
+        
+        size_hint: 1.0,1.0
+        
+        canvas:
+            Color:
+                rgba: 0.6, 0.6, 0.6, 1  
+            Rectangle:
+                pos: self.pos
+                size: self.size
+
+    
+        
+        BoxLayout:
+            id: leftPanel
+            orientation: 'vertical'
+            size_hint: (0.2, 1)
+            
+            ReturnButton:
+            BoxLayout:
+                id: data
+                orientation: 'vertical'
+                
+                canvas.before:
+                    Color:
+                        rgba: 0.3, 0.3, 0.3, 1
+                    Rectangle:
+                        pos: self.pos
+                        size: self.size
+        BoxLayout:
+            id: mainPanel
+            orientation: 'vertical'
+            size_hint: (1, 1)
+            canvas:
+                Color:
+                    rgba: 0.2, 0.2, 0.2, 1
+                Rectangle:
+                    pos: self.pos
+                    size: self.size
+
+            BoxLayout:
+                id: graphArea
+                size_hint: (1, 1)
+                canvas.before:
+                    Color:
+                        rgba: 0.6, 0.6, 0.6, 1
+                    Rectangle:
+                        pos: self.pos
+                        size: self.size
             BoxLayout:
                 id: controlsArea
                 size_hint: (1, 0.2)

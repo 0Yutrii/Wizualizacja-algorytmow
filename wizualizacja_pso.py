@@ -1,77 +1,30 @@
-from kivy.app import App
-from kivy.uix.screenmanager import ScreenManager, Screen
-from kivy.uix.dropdown import DropDown
-from kivy.uix.anchorlayout import AnchorLayout
-from kivy.uix.button import Button
-from kivy.uix.label import Label
-
-from kivy_garden.matplotlib.backend_kivyagg import FigureCanvasKivyAgg
-from kivy.clock import Clock
-from kivy.config import Config
 import numpy as np
-from matplotlib import cm
+import matplotlib
+matplotlib.use("module://kivy.garden.matplotlib.backend_kivy")
 import matplotlib.pyplot as plt
 
+from kivy.uix.screenmanager import Screen
+from kivy.uix.dropdown import DropDown
 
-import settings.klasa1 as klasa1
+from kivy.uix.button import Button
+
+
+from kivy_garden.matplotlib.backend_kivyagg import FigureCanvasKivyAgg
+from kivy.garden.matplotlib.backend_kivy import FigureCanvasKivy # type: ignore
+from kivy.clock import Clock
+
 from settings.pso_settings import PsoSettingsMenu
 
-
-#Config.set('input', 'mouse', 'mouse,disable_on_activity')
-#Config.set('input', 'mouse', 'mouse,multitouch_on_demand')
-# class CustomDropDown(BoxLayout):
-#     expanded = False
-
-#     def toggle(self):
-#         self.expanded = not self.expanded
-#         self.ids.extra_text.height = 60 if self.expanded else 0
-#         self.ids.extra_text.opacity = 1 if self.expanded else 0
-
-#     pass
-
-class Point:
-    w = 0.7
-    c1 = 1.49
-    c2 = 1.49
-    v_max = 0.1
-    
-    def __init__(self, range,get_z,globalBest):
-        
-        self.position=np.array([.0, .0, .0]) 
-        self.position[0] = np.random.uniform(low=range[0],high=range[1])
-        self.position[1] = np.random.uniform(low=range[2],high=range[3])
-        self.position[2] = (get_z(self.position[0],self.position[1]))
-        self.velocity  =np.random.rand(2) - 0.5
-        self.personalBest = self.position
-        self.globalBest = globalBest
-        print(self.position)
-        
-    
-    def show_pos(self):
-        print(self.position[0], self.position[1], self.velocity,self.PB)
-
-    def move(self,get_z):
-        self.position[0] = self.position[0] + self.velocity[0]
-        self.position[1] = self.position[1] + self.velocity[1]
-        self.position[2] = get_z(self.position[0],self.position[1])
-
-    def update_velocity(self):
-        for i in range(len(self.velocity)):
-            self.velocity[i] = np.clip(
-                ( self.w*self.velocity[i] + self.c1 * np.random.rand() * (self.personalBest[i]-self.position[i]) 
-                + self.c2 * np.random.rand() * (self.globalBest[i]-self.position[i])
-                ),-self.v_max, self.v_max)
-
+from logic.point import Point
 
         
 
-class WizualizacjaAlgorytmow(Screen):
-    plot_range = [-6,6,-6,6]
+class PSOScreen(Screen):
+    plot_range = [-6.0,6.0,-6.0,6.0]
     swarm_size = 25
     math_fun = 1
     plot_density = 0.1
 
-    
     
     data_labels_names = {
         "globalBest": "Global best value ",
@@ -83,15 +36,11 @@ class WizualizacjaAlgorytmow(Screen):
         "pointVelocity": "Point's velocity "
     }
 
-    # data_labels_mapping = {
-    #         "globalBest": point.globalBest[2],
-    #         "globalBestCords": (point.globalBest[0], point.globalBest[1]),
-    #         "personalBestCords": (point.personalBest[0],point.personalBest[1]),
-    #         "pointPersonalBest": point.personalBest[2],
-    #         "pointPosValue": point.position[2],
-    #         "pointPos": (point.position[0],point.position[1]),
-    #         "pointVelocity": (point.velocity[0],point.velocity[1])
-    #     }
+
+    if not hasattr(FigureCanvasKivy, 'motion_notify_event'):
+        def dummy_motion_notify(self, x, y, guiEvent=None):
+            print("dummy motion notify")
+        FigureCanvasKivy.motion_notify_event = dummy_motion_notify
 
     def on_pre_enter(self):
         
@@ -159,12 +108,10 @@ class WizualizacjaAlgorytmow(Screen):
         self.plotPoints.set_facecolors(all_colors)
         self.plotPoints.set_edgecolors(all_colors)
         
-        print(all_colors) 
+        #print(all_colors) 
         
         self.ax.figure.canvas.draw_idle()
 
-
-        pass
         
     def set_fun(self,op):
         functions_dict={ 1 :self.get_z1,
@@ -270,7 +217,6 @@ class WizualizacjaAlgorytmow(Screen):
         self.swarm_size = temp_swarm_size
         self.math_fun = temp_math_fun
         
-        #self.on_enter(self)
     
     def set_point(self,instance,point_index):
         self.change_point_color(self.selected_point,point_index)
@@ -305,28 +251,13 @@ class WizualizacjaAlgorytmow(Screen):
                 formatted_value=f"{value:.4f}"
             self.ids[widget_id].text = f'[color=ff0000][b]{display_name}[/b][/color]\n{formatted_value}'
 
-        #self.ids.globalBest.text ='[b][color=000000]'+ f'{self.points[point_index].globalBest[2]}' +'[/color][/b]'
+        
     def clear_data(self):
         for widget_id, value in self.data_labels_names.items():
             self.ids[widget_id].text = f''
     
 
     def drop_down_menu(self):
-
-        # self.mainbutton = Button(
-        #     text='select point',
-        #     size_hint=(None, None),
-        #     size=(150, 50)
-        # )
-
-        # anchor = AnchorLayout(
-        #     anchor_x='center',
-        #     anchor_y='center',
-        #     size_hint_y=None,
-        #     height=60
-        # )
-        # anchor.add_widget(self.mainbutton)
-        # self.ids.data.add_widget(anchor)
 
         def open_dropdown(instance):
             dropdown = DropDown()
@@ -352,37 +283,4 @@ class WizualizacjaAlgorytmow(Screen):
 
         self.ids.mainButton.bind(on_release=open_dropdown)
 
-        
 
-        
-        
-
-
-    
-
-        
-
-
-
-
-'''
-
-
-
-np.pow((np.pow(X,2)+Y-11),2) + np.pow((np.pow(Y,2)+X-7),2)
-
-(x^2 + y - 11)^2 + (x + y^2 - 7)^2
-+ np.pow((np.pow(Y,2)+X-7),2) Z = np.sin(R)
-
-z'= 4x^3 +4xy - 42 * x +2*y^2-14
-4  *np.pow(x,3) + 4 * x * y - 42 * np.pow(y,2) - 14
-
-
-
-canvas:
-                Color:
-                    rgba: 0.2, 0.2, 0.2, 1 
-                Rectangle:
-                    pos: self.pos
-                    size: self.size
-'''
