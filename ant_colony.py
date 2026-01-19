@@ -1,5 +1,5 @@
-from kivy.app import App
-from kivy.uix.boxlayout import BoxLayout
+
+
 from kivy.uix.relativelayout import RelativeLayout
 from kivy.uix.button import Button
 from kivy.graphics import Color, Line, Rectangle, Ellipse
@@ -14,6 +14,7 @@ from kivy.properties import ObjectProperty
 from kivy.clock import Clock
 
 from logic.node import Node
+from logic.ant_manager import AntManager
 from logic.ant import Ant
 
 import os
@@ -35,54 +36,7 @@ aglomeracja_slaska = [
     "Piekary Śląskie"
 ]
 
-# class Ant:
-#     def __init__(self, start_node):
-#         self.current_node = start_node
-#         self.visited_nodes = [start_node]
-#         self.total_distance = 0
-#         self.is_finished = False
-    
-#     def choose_next_node(self):
-#         neighbors = self.current_node.neighbors
-#         unvisited = [n for n in neighbors.keys() if n not in self.visited_nodes]
 
-#         if not unvisited:
-#             self.is_finished = True
-#             return None
-        
-#         next_node = np.random.choice(unvisited)
-
-#         distance = neighbors[next_node]
-#         self.total_distance += distance
-#         self.current_node = next_node
-#         self.visited_nodes.append(next_node)
-
-#         return next_node
-    
-#     def reset(self,start_node):
-#         pass
-
-# class Node:
-#     def __init__(self,name, pos_x, pos_y, size=300):
-#         self.name = name
-#         self.pos_x = pos_x
-#         self.pos_y = pos_y
-#         self.size = size
-#         self.neighbors = {}
-#         self.data = {}
-
-#     def add_neighbor(self, neighbor_node, lenght):
-#         self.neighbors[neighbor_node]=lenght
-    
-#     def remove_neighbor(self, neighbor):
-#         if neighbor in self.neighbors:
-#             del self.neighbors[neighbor]
-#         del self
-
-#     def remove_node(self):
-#         for neighbor in self.neighbors.keys():
-#             neighbor.remove_neighbor(self)
-#         self.neighbors.clear()
 
 class GraphWidget(RelativeLayout):
     on_data_change = ObjectProperty(None)
@@ -94,7 +48,11 @@ class GraphWidget(RelativeLayout):
         
         self.create_node_buttons()
         self.bind(size=self.draw_graph, pos=self.draw_graph)
-        self.ant_test(self.nodes["Łódź"])
+        self.ant_manager = AntManager(self.nodes,20)
+        self.ant_manager.run(iterations=200)
+        #self.ant_manager.make_report()
+
+        #self.ant_test(self.nodes["Łódź"])
         #print(self.nodes["Katowice"].name)
         # for i, (name, data) in enumerate(cities.items()):
         #     new_node = Node(name,data['x'],data['y'],data['pop'])
@@ -117,13 +75,13 @@ class GraphWidget(RelativeLayout):
         
     
 
-    def ant_test(self,node):
-        ant = Ant(node,1.0,1.0)
-        print(f'wezel startowy {ant.current_node.name}')
-        ant_next_node = ant.choose_next_node()
-        print(f'nowy wezel  {ant_next_node.name}')
-        ant_next_node = ant.choose_next_node()
-        print(f'nowy wezel  {ant_next_node.name}')
+    # def ant_test(self,node):
+    #     ant = Ant(node,1.0,1.0)
+    #     print(f'wezel startowy {ant.current_node.name}')
+    #     ant_next_node = ant.choose_next_node()
+    #     print(f'nowy wezel  {ant_next_node.name}')
+    #     ant_next_node = ant.choose_next_node()
+    #     print(f'nowy wezel  {ant_next_node.name}')
 
     # def save_graph(self,nodes, filename="graph_data.pkl"):
     #     try:
@@ -269,6 +227,7 @@ class AntColonyScreen(Screen):
         
         
         if 'graphArea' in self.ids:
+            self.ids.graphArea.clear_widgets()
             self.ids.graphArea.add_widget(self.graph)
     
     def start_stop(self,instance):
